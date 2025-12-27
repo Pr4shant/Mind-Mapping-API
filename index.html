@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MindGraph Demo</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0b0b0f;
+      color: #f5f5f5;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      gap: 8px;
+      padding: 10px;
+      background: #111;
+      border-bottom: 1px solid #222;
+    }
+
+    textarea, input {
+      background: #18181b;
+      color: #f5f5f5;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 14px;
+    }
+
+    textarea {
+      flex: 1;
+      resize: vertical;
+    }
+
+    button {
+      background: #06b6d4;
+      color: #000;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    #graph {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <textarea id="text" placeholder="Paste text here..."></textarea>
+  <button onclick="run()">Generate</button>
+</header>
+
+<div id="graph"></div>
+
+<script src="https://unpkg.com/3d-force-graph"></script>
+
+<script>
+  /* -------------------------------
+     Graph setup
+  -------------------------------- */
+  const Graph = ForceGraph3D()(document.getElementById("graph"))
+    .backgroundColor("#0b0b0f")
+    .nodeLabel("label")
+    .nodeRelSize(6) // MUST be a number in 3D
+    .nodeVal(node => Math.min(1 + (node.__degree || 0) * 0.6, 4))
+    .linkWidth(1.5)
+    .showNavInfo(true);
+
+  let currentGraph = { nodes: [], links: [] };
+  let selectedNode = null;
+  let connectedNodes = new Set();
+
+  /* -------------------------------
+     Graph helpers
+  -------------------------------- */
+
+  function attachDegrees(graph) {
+    const degrees = {};
+    graph.links.forEach(l => {
+      const s = typeof l.source === "object" ? l.source.id : l.source;
+      const t = typeof l.target === "object" ? l.target.id : l.target;
+      degrees[s] = (degrees[s] || 0) + 1;
+      degrees[t] = (degrees[t] || 0) + 1;
+    });
+    graph.nodes.forEach(n => {
+      n.__degree = degrees[n.id] || 0;
+    });
+  }
+
+  function computeConnected(nodeId) {
+    const set = new Set();
+    currentGraph.links.forEach(l => {
+      const s = typeof l.source === "object" ? l.source.id : l.source;
+      const t = typeof l.target === "object" ? l.target.id : l.target;
+      if (s === nodeId) set.add(t);
+      if (t === nodeId) set.add(s);
+    });
+    return set;
+  }
+
+  function clearSelection() {
+    selectedNode = null;
+    connectedNodes.clear();
+    updateColors();
+  }
+
+  function shouldHighlight(id) {
+    if (!selectedNode) return true;
+    return id === selectedNode || connectedNodes.has(id);
+  }
+
+  function toGrayscale(color) {
+    const m = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+    if (m) return `hsl(0, 0%, ${m[3]}%)`;
+    return "hsl(0, 0%, 60%)";
+  }
+
+  /* -------------------------------
+     Colors (matches inspiration)
+  -------------------------------- */
+  function getCategoryColor(category = "") {
+    const c = category.toLowerCase();
+    if (c.includes("belief")) return "hsl(177, 100%, 50%)";
+    if (c.includes("emotion")) return "hsl(10, 70%, 70%)";
+    if (c.includes("thought")) return "hsl(40, 100%, 75%)";
+    if (c.includes("desire") || c.includes("goal")) return "hsl(275, 65%, 55%)";
+    if (c.includes("fear")) return "hsl(260, 45%, 50%)";
+    if (c.includes("need")) return "hsl(210, 80%, 65%)";
+    if (c.includes("strength")) return "hsl(170, 50%, 40%)";
+    if (c.includes("weakness")) return "hsl(260, 45%, 30%)";
+    if (c.includes("motivation")) return "hsl(190, 100%, 50%)";
+
+    let hash = 0;
+    for (let i = 0; i < c.length; i++) {
+      hash = c.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return `hsl(${Math.abs(hash) % 360}, 65%, 60%)`;
+  }
+
+  /* -------------------------------
+     Visual updates
+  -------------------------------- */
+  function updateColors() {
+    Graph
+      .nodeColor(node => {
+        const base = getCategoryColor(node.category);
+        return shouldHighlight(node.id) ? base : toGrayscale(base);
+      })
+      .linkColor(link => {
+        const s = typeof link.source === "object" ? link.source.id : link.source;
+        const t = typeof link.target === "object" ? link.target.id : link.target;
+        return shouldHighlight(s) && shouldHighlight(t)
+          ? "rgba(0,255,247,0.25)"
+          : "rgba(120,120,120,0.08)";
+      });
+  }
+
+  /* -------------------------------
+     Interaction
+  -------------------------------- */
+  Graph
+    .onNodeClick(node => {
+      if (selectedNode === node.id) {
+        clearSelection();
+      } else {
+        selectedNode = node.id;
+        connectedNodes = computeConnected(node.id);
+        updateColors();
+      }
+    })
+    .onBackgroundClick(() => clearSelection());
+
+  /* -------------------------------
+     API call
+  -------------------------------- */
+  async function run() {
+    const text = document.getElementById("text").value.trim();
+    if (!text) return;
+
+    const res = await fetch("https://mindgraph-api.onrender.com/v1/graph", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer pc"  // Replace with your actual API key
+      },
+      body: JSON.stringify({
+        text,
+        graph: currentGraph
+      })
+    });
+
+    if (!res.ok) {
+      alert(await res.text());
+      return;
+    }
+
+    currentGraph = await res.json();
+    attachDegrees(currentGraph);
+    Graph.graphData(currentGraph);
+    clearSelection();
+
+    document.getElementById("text").value = "";
+  }
+</script>
+
+</body>
+</html>

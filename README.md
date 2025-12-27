@@ -113,6 +113,12 @@ curl -X POST https://mindgraph-api.onrender.com/v1/graph ^
 
 ---
 
+## Getting the API Key
+
+Email me at - prashant.unravel@gmail.com with the subject "Get MindGraph API Key" to receive your API key.
+
+---
+
 ## Using the API
 
 Store your API key securely and use it in API requests:

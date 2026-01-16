@@ -1,5 +1,9 @@
 # MINDMAP API
 
+### URL: https://mindgraphs.vercel.app/
+
+### Example: https://mindgraphs.vercel.app/?application_id=test_app&actor_id=test&actor_domain_id=test&actor_domain_type=test&mindmap_domain_id=test2&mindmap_domain_type=memory&api_key=apikey&text=%27test%27
+
 ### 📡 API Endpoint
 - **POST /v1/mindmap** - Handles mindmap graph requests
 - **Authentication**: API key required
@@ -52,7 +56,7 @@ The endpoint implements exactly what you requested:
 
 ### Use in Production
 ```bash
-curl -X POST http://localhost:8000/v1/mindmap \
+curl -X POST http://mindgraph-api.onrender.com/v1/mindmap \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -172,8 +176,6 @@ ORDER BY updated_at DESC LIMIT 10;
 ✅ Fully backward compatible
 
 ---
+Happy mindmapping! 
 
-**Next Step**: Run the database migration, then test with `test_mindmap_endpoint.py`
-
-Happy mindmapping! 🚀
 

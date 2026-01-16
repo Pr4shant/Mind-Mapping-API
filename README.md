@@ -129,53 +129,8 @@ curl -X POST http://mindgraph-api.onrender.com/v1/mindmap \
 ```
 **Response**: `is_new: false` with existing graph
 
-## 📊 Database Example Queries
-
-### Get all graphs for an application
-```sql
-SELECT * FROM mindmap_graphs WHERE application_id = 'app_456';
-```
-
-### Get specific mindmap graph
-```sql
-SELECT graph_data FROM mindmap_graphs 
-WHERE application_id = 'app_456' 
-  AND actor_id = 'actor_789'
-  AND domain_id = 'memory_2026_01_13'
-  AND domain_type = 'memory';
-```
-
-### Get recently updated graphs
-```sql
-SELECT * FROM mindmap_graphs 
-ORDER BY updated_at DESC LIMIT 10;
-```
-
-## 🔐 Security & Rate Limiting
-
-- All endpoints require API key authentication
-- Rate limited to 20 requests per minute per key
-- Proper error responses for all scenarios
-- Database transactions properly managed
-- Session cleanup guaranteed
-
-## 📊 Performance
-
-- **Query Performance**: O(1) - Uses database indices
-- **Storage**: JSONB for efficient graph storage
-- **Scalability**: Can handle millions of records
-- **Indices**: On (application_id, actor_id), (domain_id, domain_type), (created_at)
-
-## 🎯 Everything Works Out of the Box
-
-✅ Uses existing `analyze_text()` function for LLM
-✅ Uses existing `build_graph_from_subthoughts()` for merging
-✅ Uses existing authentication system
-✅ Uses existing analytics system
-✅ No breaking changes to existing code
-✅ Fully backward compatible
-
 ---
 Happy mindmapping! 
+
 
 

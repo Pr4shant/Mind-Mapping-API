@@ -2,7 +2,7 @@
 
 ### URL: https://mindgraphs.vercel.app/
 
-### Example: https://mindgraphs.vercel.app/?application_id=test_app&actor_id=test&actor_domain_id=test&actor_domain_type=test&mindmap_domain_id=test2&mindmap_domain_type=memory&api_key=apikey&text=%27test%27
+### Example: https://mindgraphs.vercel.app/?application_id=test_app&actor_id=test&actor_domain_id=test&actor_domain_type=test&mindmap_domain_id=test&mindmap_domain_type=memory&api_key=api_key&text=%27feeling%20good%27
 
 ### 📡 API Endpoint
 - **POST /v1/mindmap** - Handles mindmap graph requests
@@ -131,6 +131,7 @@ curl -X POST http://mindgraph-api.onrender.com/v1/mindmap \
 
 ---
 Happy mindmapping! 
+
 
 
 

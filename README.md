@@ -130,7 +130,15 @@ curl -X POST http://mindgraph-api.onrender.com/v1/mindmap \
 **Response**: `is_new: false` with existing graph
 
 ---
+
+### Pricing
+$0.01/1K tokens input
+$0.04/1K tokens output
+
+---
+
 Happy mindmapping! 
+
 
 
 

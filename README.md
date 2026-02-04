@@ -131,6 +131,13 @@ curl -X POST http://mindgraph-api.onrender.com/v1/mindmap \
 
 ---
 
+### If the graph becomes too big and crashes:
+Use the paramaters: 
+- 'max_nodes' - defaults to 900
+- 'filter_mode' - options: 'connected' (nodes with maximum connections), 'latest' (latest nodes), 'all'. Defaults to 'connected'
+
+---
+
 ### Pricing
 $0.01/1K tokens input
 $0.04/1K tokens output
@@ -138,6 +145,7 @@ $0.04/1K tokens output
 ---
 
 Happy mindmapping! 
+
 
 
 

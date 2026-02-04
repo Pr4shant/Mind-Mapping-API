@@ -136,6 +136,8 @@ Use the paramaters:
 - 'max_nodes' - defaults to 900
 - 'filter_mode' - options: 'connected' (nodes with maximum connections), 'latest' (latest nodes), 'all'. Defaults to 'connected'
 
+filter_mode='all' overrides max_nodes and shows all nodes
+
 ---
 
 ### Pricing
@@ -145,6 +147,7 @@ $0.04/1K tokens output
 ---
 
 Happy mindmapping! 
+
 
 
 

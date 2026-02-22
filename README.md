@@ -56,7 +56,7 @@ The endpoint implements exactly what you requested:
 
 ### Use in Production
 ```bash
-curl -X POST http://mindgraph-api.onrender.com/v1/mindmap \
+curl -X POST http://mindgraph-api-ifum.onrender.com/v1/mindmap \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -147,6 +147,7 @@ $0.04/1K tokens output
 ---
 
 Happy mindmapping! 
+
 
 
 
